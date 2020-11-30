@@ -1,0 +1,44 @@
+{
+    "asoc" : {
+        "KeyId":"",
+        "KeySecret":""
+    },
+    "ase" : {
+        "KeyId":"",
+        "KeySecret":"",
+        "Username":"",
+        "Password":""
+    },
+    "appId":"",
+    "iastConfig":"",
+    "host":"",
+    "asocReport": {
+        "name" : "report",
+        "path" : "./",
+        "model" : {
+                "Configuration": {
+                "Summary": true,
+                "Details": true,
+                "Discussion": true,
+                "Overview": true,
+                "TableOfContent": true,
+                "Advisories": true,
+                "FixRecommendation": true,
+                "History": true,
+                "Coverage": true,
+                "IsTrialReport": true,
+                "MinimizeDetails": false,
+                "ReportFileType": "Html",
+                "Title": "Report Name",
+                "Notes": "Notes",
+                "Locale": "en-US"
+                },
+                "OdataFilter": "",
+                "ApplyPolicies": "None",
+                "SelectPolicyIds": [
+                "00000000-0000-0000-0000-000000000000"
+                ]
+        }
+    }
+}
+	
