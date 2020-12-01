@@ -1,5 +1,7 @@
 import sys
 import json
+import re
+from distutils import util
 
 class BaseServiceLib(object):
     # hold the execution options
@@ -46,7 +48,15 @@ class BaseServiceLib(object):
             if not part in node:
                 node[part] = {}
             node = node[part]
-        node[memeber] = value
+        if value.startswith("\""):
+            node[memeber] = value.strip("\"")
+        elif re.match("\\d+",value):
+            node[memeber] = int(value)
+        else:
+            try:
+                node[memeber] = bool(util.strtobool(value))
+            except ValueError:
+                print(f"Value is invalid: {value}\n(hint: strings should always be in double-quotes - ...=\"value\"")
 
     # provides an option value given a specific name
     def Option(self, name):
