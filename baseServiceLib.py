@@ -45,7 +45,7 @@ class BaseServiceLib(object):
         del parts[-1]
         node = self.Options
         for part in parts:
-            if not part in node:
+            if part not in node:
                 node[part] = {}
             node = node[part]
         if value.startswith("\""):
