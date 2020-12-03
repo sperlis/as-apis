@@ -9,7 +9,8 @@
         "Username":"",
         "Password":""
     },
-    "appId":"",
+    "subjectId":"",
+    "scope":"",
     "iastConfig":"",
     "host":"",
     "asocReport": {

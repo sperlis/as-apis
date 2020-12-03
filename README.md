@@ -1,7 +1,7 @@
 # asoc-apis
 Learn ASoC APIs by example. Feel free to use or reuse, but keep in mind the code is provided according to the license. 
 
-The intension is for you to take the scripts and use them as examples for your own scripts. While in Python, the logic is easily migrated into most languages.
+The intention is for you to take the scripts and use them as examples for your own scripts. While in Python, the logic is easily migrated into most languages.
 
 Visit https://cloud.appscan.com/swagger/ui/index for details on how to use the APIs.
 
@@ -11,15 +11,15 @@ Please make sure Requests is set up prior to running these scripts.
 
 ## Execution:
 Example:
-
 ```
 py asocCreateReport.py
 ```
-The intended execution is to run the individual functionality files to perform actions. Each logical action (acording to my logic, which is of course different than everyone elses by definition) is in its own file. They are not neccessarily atomic, but they do accomplish a specific target.
 
-Alternatively, the command line can be used to configure an execution, but this can be tedious for complext configuration, so the config file should always be used, and command line should only be used to override values. 
+The intended execution is to run the individual functionality files to perform actions. Each logical action (according to my logic, which is of course different than everyone else's by definition) is in its own file. They are not necessarily atomic, but they do accomplish a specific target.
 
-All JSON file configuration items can be overridden in the command line. To override them, use the fully qualified path in the JSON object hierachy to the specific item. For example, if we wanted to override the model item `Title` from "Report Name" to "My Special Report":
+Alternatively, the command line can be used to configure an execution, but this can be tedious for complex configuration, so the config file should always be used, and command line should only be used to override values.
+
+All JSON file configuration items can be overridden in the command line. To override them, use the fully qualified path in the JSON object hierarchy to the specific item. For example, if we wanted to override the model item `Title` from "Report Name" to "My Special Report":
 ```
 py asocCreateReport.py asocReport.model.Configuration.Title="My Special Report"
 ```
@@ -68,12 +68,13 @@ Please note that the configuration file is used by both ASoC and ASE scripts, wh
 
 #### asoc
 `asoc` object contains the Key ID and Secret that are required.
-
-To 
 #### ase
-`ase` object containst the Key ID and Secret that are required. However, since ASE allows it, the object also contains username and password. It is _**highly recommneded**_ that you do not store usernames and passwords in configuration files. ASE, since it's a local service, also requires the speific host to be used. 
-#### appId
-Many of the API calls are application based (especially in ASoC, but also in ASE) and this is the common ID that will used in all calls during the execution of the script. 
+`ase` object contains the Key ID and Secret that are required. However, since ASE allows it, the object also contains username and password. It is _**highly recommended**_ that you do not store usernames and passwords in configuration files. ASE, since it's a local service, also requires the specific host to be used. 
+#### subjectId
+The ID of the subject of the API call. This can be an application ID, a scan ID, execution ID, user ID, and so on. Every item in ASoC has an ID, and can be the subject of an API call.
+#### scope
+The scope is the subject _type_ of the API call. Scope currently includes Application, Scan, and ScanExecution, but the ASoC API documentation should be referred as more scopes may be available in the future. Most API calls have fixed subject (users, presences, asset-groups, etc.), however, a few (like reports) can have different subject types and the scope identifies it.
+ 
 #### iastCofig
 _this is a placeholder for future updates_
 
@@ -86,8 +87,7 @@ py asocCreateReport.py
 This script is used to generate a report. There are three steps - create the report, poll the status until the report is ready, and download the report.
 #### Configuration:
 `name` is the report file name. There is no need to add a suffix, as the report file type will be automatically appended (html, pdf, etc.).
+
 `path` is the store location of the resulting report.
+
 `model` is the actual REST API JSON model that is used. You can set defaults here, and override with the command-line.
-
-
-
