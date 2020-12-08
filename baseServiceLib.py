@@ -1,9 +1,14 @@
 import sys
 import json
 import re
+import os.path
+
 from distutils import util
 
 class BaseServiceLib(object):
+
+    __defaultConfigFile = "./config.json"
+
     # hold the execution options
     # the only mandatory fields are KeyId/KeySecret
     Options = {}
@@ -18,13 +23,23 @@ class BaseServiceLib(object):
     # NOTE: at minimum, config file/command line must include authorization KeyId/KeySecret
     def getCommandLineOptions(self):
         if (not self.Options):
+            configPrefix = "namedConfigFile="
+            res = list(filter(lambda x: configPrefix in x, sys.argv))
+
             # read config file
-            self.loadConfig()
+            if len(res) > 0:
+                # the first config file found is used
+                self.loadConfig(res[0][len(configPrefix):])
+            else: 
+                self.loadConfig()
                 
             # process command-line. To override config file the format must be <name>=<value>
             # if explicit name is not provided to the option, a "$clp<index>" name is generated
+            # we skip customConfigFile item(s)
             index = 0
             for val in sys.argv:
+                if val.startswith(configPrefix):
+                    continue
                 eq = val.find('=')
                 if eq == -1:
                     self.Options["$clp" + str(index)] = val
@@ -34,9 +49,14 @@ class BaseServiceLib(object):
 
         return self.Options
 
-    def loadConfig(self):
-        # TODO allow specifying a custom config file name
-        with open("config.json", "r") as config:
+    def loadConfig(self, configFilePath = None):
+        if configFilePath is None:
+            configFilePath = self.__defaultConfigFile
+        elif not os.path.exists(configFilePath) or not os.path.isfile(configFilePath):
+            print(f"\"{configFilePath}\" Custom file does not exist or path is not a file. Reverting to local {self.__defaultConfigFile}.")
+            configFilePath = self.__defaultConfigFile
+
+        with open(configFilePath, "r") as config:
             self.Options = json.load(config)
 
     def setValue(self, param, value):

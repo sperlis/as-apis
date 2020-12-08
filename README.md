@@ -17,6 +17,17 @@ py asocCreateReport.py
 
 The intended execution is to run the individual functionality files to perform actions. Each logical action (according to my logic, which is of course different than everyone else's by definition) is in its own file. They are not necessarily atomic, but they do accomplish a specific target.
 
+The basic execution configuration should be placed in `config.json`, read by default from the current directory. 
+
+> **NOTE**
+
+> To use a configuration file that is not in the local directory or that uses a custom name, use the `namesConfigFile` command-line argument.
+
+> Example:
+>```
+>py asocCreateReport.py namedConfigFile='myDefaultReport.json'
+>```
+
 Alternatively, the command line can be used to configure an execution, but this can be tedious for complex configuration, so the config file should always be used, and command line should only be used to override values.
 
 All JSON file configuration items can be overridden in the command line. To override them, use the fully qualified path in the JSON object hierarchy to the specific item. For example, if we wanted to override the model item `Title` from "Report Name" to "My Special Report":
