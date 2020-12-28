@@ -21,7 +21,7 @@ The basic execution configuration should be placed in `config.json`, read by def
 
 > **NOTE**
 
-> To use a configuration file that is not in the local directory or that uses a custom name, use the `namesConfigFile` command-line argument.
+> To use a configuration file that is not in the local directory or that uses a custom name, use the `namedConfigFile` command-line argument.
 
 > Example:
 >```
@@ -34,6 +34,8 @@ All JSON file configuration items can be overridden in the command line. To over
 ```
 py asocCreateReport.py asocReport.model.Configuration.Title="My Special Report"
 ```
+
+More details on using the command-line can be found [here](./CLI.md).
 
 The config file has two types of nodes:
 1. Service 
@@ -85,8 +87,11 @@ Please note that the configuration file is used by both ASoC and ASE scripts, wh
 The ID of the subject of the API call. This can be an application ID, a scan ID, execution ID, user ID, and so on. Every item in ASoC has an ID, and can be the subject of an API call.
 #### scope
 The scope is the subject _type_ of the API call. Scope currently includes Application, Scan, and ScanExecution, but the ASoC API documentation should be referred as more scopes may be available in the future. Most API calls have fixed subject (users, presences, asset-groups, etc.), however, a few (like reports) can have different subject types and the scope identifies it.
- 
-#### iastCofig
+#### host
+The target host and should be in the form of `<scheme>//<host>:<port(options)>`. The default value is `https://cloud.appscan.com`. This is relevant when config file is used with ASE client, but that belongs to another project :smile:. We also use it for internal testing against development or staging environments. When working with ASoC there is no need to change this value.
+#### apiVersion
+_this is a placeholder for future updates_ 
+#### iastConfig
 _this is a placeholder for future updates_
 
 <hr />
@@ -102,3 +107,4 @@ This script is used to generate a report. There are three steps - create the rep
 `path` is the store location of the resulting report.
 
 `model` is the actual REST API JSON model that is used. You can set defaults here, and override with the command-line.
+

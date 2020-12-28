@@ -1,0 +1,93 @@
+{
+    "asoc" : {
+        "KeyId": "",
+        "KeySecret": ""
+    },
+    "ase" : {
+        "KeyId": "",
+        "KeySecret": "",
+        "Username": "",
+        "Password": ""
+    },
+    "subjectId": "",
+    "scope": "",
+    "iastConfig": "",
+    "host": "",
+    "apiVersion": "2",
+    "monitorProgress": false,
+    "asocReport": {
+        "name" : "report",
+        "path" : "./",
+        "model" : {
+                "Configuration": {
+                    "Summary": true,
+                    "Details": true,
+                    "Discussion": true,
+                    "Overview": true,
+                    "TableOfContent": true,
+                    "Advisories": true,
+                    "FixRecommendation": true,
+                    "History": true,
+                    "Coverage": true,
+                    "IsTrialReport": true,
+                    "MinimizeDetails": false,
+                    "ReportFileType": "Html",
+                    "Title": "Report Name",
+                    "Notes": "Notes",
+                    "Locale": "en-US"
+                },
+                "OdataFilter": "",
+                "ApplyPolicies": "None",
+                "SelectPolicyIds": [
+                    "00000000-0000-0000-0000-000000000000"
+                ]
+        }
+    },
+    "asocDastScan": {
+        "file": "",
+        "loginFile": "",
+        "model": {
+            "ScanFileId": "",
+            "TestOnly": false,
+            "StartingUrl": "",
+            "LoginUser": "",
+            "LoginPassword": "",
+            "TestPolicy": "",
+            "ExtraField": "",
+            "ScanType": "Production",
+            "PresenceId": "00000000-0000-0000-0000-000000000000",
+            "IncludeVerifiedDomains": true,
+            "HttpAuthUserName": "",
+            "HttpAuthPassword": "",
+            "HttpAuthDomain": "",
+            "OnlyFullResults": true,
+            "TestOptimizationLevel": "NoOptimization",
+            "LoginSequenceFileId": "00000000-0000-0000-0000-000000000000",
+            "ScanName": "",
+            "EnableMailNotification": true,
+            "Locale": "en-US",
+            "AppId": "",
+            "Execute": true,
+            "Personal": false,
+            "ClientType": "ASoC-API-Samples"
+          }
+    },
+    "asocSastScan": {
+        "file": "",
+        "mode": {
+            "ApplicationFileId": "",
+            "ScanName": "",
+            "EnableMailNotification": true,
+            "Locale": "en-US",
+            "AppId": "",
+            "Execute": true,
+            "Personal": false,
+            "ClientType": "ASoC-API-Samples"
+        }
+    },
+    "asocMonitorScan": {
+        "continuos": false,
+        "timeSpanSeconds": 100
+    }
+}
+	
