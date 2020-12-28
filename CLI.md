@@ -12,10 +12,10 @@ Most of the command-line arguments are related to the performing operations. How
 
 Example:
 ```
->py asocCreateReport.py namedConfigFile="./reportConfig.json"
+> py asocCreateReport.py namedConfigFile="./reportConfig.json"
 Using configuration file: ./reportConfig.json
 
->py asocCreateReport.py namedConfigFile="./reportConfig.json" Verbose
+> py asocCreateReport.py namedConfigFile="./reportConfig.json" Verbose
 Using configuration file: ./reportConfig.json
 Print level set to Verbose
 ```
@@ -59,13 +59,13 @@ Again, just like it would in code.
 ## Overriding Options
 Any option in the configuration file can be overridden using the command-line:
 
- `py myScript.py subjectId='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'`
+ `> py myScript.py subjectId='xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'`
 
 will override the value of `subjectId` key in the options object.
 
 To update values in internal object, the qualified path can be used:
 
-`py myScript.py asocDastScan.model.StartingUrl='https://demo.testfire.net'`
+`> py myScript.py asocDastScan.model.StartingUrl='https://demo.testfire.net'`
 
 will override the `StartingUrl` key in the `model` member's object, under `asocDastScan`
 
@@ -85,17 +85,17 @@ Example 1:
 ```
 to update the staring URL, use a string:
 
-`py myScript.py asocDastScan.model.StartingUrl='https://demo.testfire.net'`
+`> py myScript.py asocDastScan.model.StartingUrl='https://demo.testfire.net'`
 
 In this case, since the string is continuos you can do away with the quotes:
 
-`py myScript.py asocDastScan.model.StartingUrl=https://demo.testfire.net`
+`> py myScript.py asocDastScan.model.StartingUrl=https://demo.testfire.net`
 
 (since the fallback type is [str](https://docs.python.org/3/library/stdtypes.html#text-sequence-type-str) and `StartingUrl` is a string, this will work)
 
 To update the verified domains inclusion flag, use a bool:
 
-`py myScript.py asocDastScan.model.IncludeVerifiedDomains=True`
+`> py myScript.py asocDastScan.model.IncludeVerifiedDomains=True`
 
 Note the capital T (for `True`). Since is a _literal_ evaluation, it must match Python syntax to work. using a lowercase t (for `true`) will yield:
 
@@ -103,7 +103,7 @@ Note the capital T (for `True`). Since is a _literal_ evaluation, it must match 
 
 Failing to match a type can cause another error. Calling:
 
-`py myScript.py asocDastScan.model.IncludeVerifiedDomains=4`
+`> py myScript.py asocDastScan.model.IncludeVerifiedDomains=4`
 
 Will yield this error:
 
@@ -125,11 +125,11 @@ Existing config:
 
 Command-line:
 
-`py myScript.py asoc={"KeyId":"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx","KeySecret":"yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"}`
+`> py myScript.py asoc={"KeyId":"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx","KeySecret":"yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"}`
 
 This will work OK. However, this will also work OK:
 
-`py myScript.py asoc={"KeyId":True,"KeySecret":False}`
+`> py myScript.py asoc={"KeyId":True,"KeySecret":False}`
 
 but of course, break the logic of the application. Avoid this unless any other object is completely unreasonable.
 
@@ -137,19 +137,19 @@ but of course, break the logic of the application. Avoid this unless any other o
 Any command-line option set in the form form of name=value will be treated as a configuration item and added to the options object in __relative hierarchy__.
 
 This means that the periods in the name are treated as paths in the options object:
-Example: `py myScript.py doAlerts=True`
+Example: `> py myScript.py doAlerts=True`
 ```
 asoc = ASoC()
 shouldDoAlerts = asoc["doAlerts"]
 ```
-However, `py myScript.py custom.doAlerts=True`
+However, `> py myScript.py custom.doAlerts=True`
 ```
 asoc = ASoC()
 shouldDoAlerts = asoc["custom"]["doAlerts"]
 ```
 This also allows you to set your own custom object:
 
-`py myScript.py custom="{'doAlerts':True,'volume':'VeryLoud'}`
+`> py myScript.py custom="{'doAlerts':True,'volume':'VeryLoud'}`
 
 Code will be:
 ```
@@ -159,7 +159,7 @@ howLoud = asoc.Options["custom"]["volume"]
 ```
 ## Custom Flags
 You can create your own custom flags to use in your own code simply by specifying them on the command line. They are added, as-is, to the root of the options object and to use them simple check they exist or not.
-For example: `py myScript.py doAlerts`
+For example: `> py myScript.py doAlerts`
 
 In the code, you can simple check:
 ```
@@ -168,7 +168,7 @@ shouldDoAlerts = 'doAlerts' in asoc.Options
 ```
 Flags are not hierarchial. This means that a flag name can contain dots:
 
-Example: `py myScript.py do.Alerts`
+Example: `> py myScript.py do.Alerts`
 
 ```
 asoc = ASoC()
