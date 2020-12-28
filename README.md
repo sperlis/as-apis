@@ -9,6 +9,12 @@ Visit https://cloud.appscan.com/swagger/ui/index for details on how to use the A
 - Requests: https://requests.readthedocs.io/en/master/
 Please make sure Requests is set up prior to running these scripts.
 
+Use:
+```
+> pip install -r requirements.txt
+```
+to automate the install.
+
 ## Execution:
 Example:
 ```
