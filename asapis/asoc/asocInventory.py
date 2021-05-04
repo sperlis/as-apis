@@ -1,3 +1,4 @@
+from asapis.utils.printUtil import out
 from asapis.services.asoclib import ASoC
 
 
@@ -6,11 +7,11 @@ asoc = ASoC()
 
 res = asoc.get("Account/TenantInfo")
 
-print(res.json())
+out(res.json())
 
 res = asoc.get("Account/SubscriptionInfo")
 
-print(res.json())
+out(res.json())
 
-print(asoc.get("Users").json())
+out(asoc.get("Users").json())
 

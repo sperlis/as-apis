@@ -1,84 +1,84 @@
 import requests
 
 from asapis.services.asoclib import ASoC
-from asapis.asoc.asocEnums import APIScope, Technology
+from asapis.asoc.asocEnums import APIScopeV2, TechnologyV2
 from asapis.utils.printUtil import out
-from asapis.asoc.asocScanMonitor import monitorScanProgress
+from asapis.asoc.asocScanMonitor import monitor_scan_progress
 
 asoc = ASoC()
 
-# rerun a previously created scan
+# Rerun a previously created scan
 
-scanId = asoc.Options["subjectId"]
+scan_id = asoc.config["SubjectId"]
 
-res = asoc.get(f"Scans/{scanId}")
+res = asoc.get(f"Scans/{scan_id}")
 
 if not res.ok:
-    asoc.printResponseError(res)
+    asoc.print_response_error(res)
     exit(1)
 
-scanData = res.json()
+scan_data = res.json()
 
-technology:Technology = Technology[scanData["Technology"]]
+technology:TechnologyV2 = TechnologyV2[scan_data["Technology"]]
 
 # First, we update any changes to the scan
 # The update model allows us to change the name of the scan name, 
 # sending email notifications, and the Presence ID (for DAST scans)
-updateModel = {
-    "Name": scanData["Name"],
-    "EnableMailNotifications": scanData["EnableMailNotification"],
-    "PresenceId": scanData["Id"]
+update_model = {
+    "Name": scan_data["Name"],
+    "EnableMailNotifications": scan_data["EnableMailNotification"],
+    "PresenceId": scan_data["Id"]
 }
 model = None
-if technology is Technology.DynamicAnalyzer:
-    model = asoc.Options["asocDastScan"]["model"]
+if technology is TechnologyV2.DynamicAnalyzer:
+    model = asoc.get_model("AsocDastScan")
 else:
-    model = asoc.Options["asocSastScan"]["model"]
+    model = asoc.config("AsocSastScan")
 
 changed = False
 
 # for static analysis we only change the name and 
-if updateModel["Name"] != model["Name"]:
+if update_model["Name"] != model["Name"]:
     changed = True
-    updateModel["Name"] = model["Name"]
-if updateModel["EnableMailNotifications"] != model["EnableMailNotifications"]:
+    update_model["Name"] = model["Name"]
+if update_model["EnableMailNotifications"] != model["EnableMailNotifications"]:
     changed = True
-    updateModel["EnableMailNotifications"] = model["EnableMailNotifications"]
+    update_model["EnableMailNotifications"] = model["EnableMailNotifications"]
 
 # dynamic may update the Presence ID as well, which is irrelevant for SAST scans
-if model["PresenceId"] and updateModel["PresenceId"] != model["PresenceId"]:
+if model["PresenceId"] and update_model["PresenceId"] != model["PresenceId"]:
     changed = True
-    updateModel["PresenceId"] = model["PresenceId"]
+    update_model["PresenceId"] = model["PresenceId"]
 
 # if no changes were configured, we skip the update
 if changed:
-    res = asoc.put(f"Scans/{scanId}", json=updateModel)
+    res = asoc.put(f"Scans/{scan_id}", json=update_model)
 
 
-rerunModel = {
+rerun_model = {
     "FileId": "",
     "ClientType": "ASoC-API-Samples"
 }
 
 # for static analysis, it only makes to run a rescan with a new IRX
 # we need to upload it here
-if technology is Technology.StaticAnalyzer:
-    scanFile = asoc.Options["asocSastScan"]["file"]
-    if scanFile:
-        scanFileId = asoc.upload(scanFile)
-        if scanFileId:
-            model["ApplicationFileId"] = scanFileId
+if technology is TechnologyV2.StaticAnalyzer:
+    scan_file = asoc.config["asocSastScan"]["file"]
+    if scan_file:
+        scan_file_id = asoc.upload(scan_file)
+        if scan_file_id:
+            model["ApplicationFileId"] = scan_file_id
     # this will either be the file we just uploaded, or an ID configured externally
     # from un uploaded file
-    rerunModel["FileId"] = model["ApplicationFileId"]
+    rerun_model["FileId"] = model["ApplicationFileId"]
 
-res = asoc.post(f"Scans/{scanId}/Executions", json=rerunModel)
+res = asoc.post(f"Scans/{scan_id}/Executions", json=rerun_model)
 
 if not res.ok:
-    asoc.printResponseError(res)
+    asoc.print_response_error(res)
     exit(1)
 
-out(f"Reran scan ID: {scanId}")
+out(f"Reran scan ID: {scan_id}")
 
-if asoc.Options["monitorProgress"]:
-    monitorScanProgress(asoc, subjectId=scanId, scope=APIScope.Scan)
+if asoc.config["ScanMonitor"]["Automatic"]:
+    monitor_scan_progress(asoc, subject_id=scan_id, scope=APIScopeV2.Scan)

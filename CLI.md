@@ -3,25 +3,28 @@
 As noted, the command-line allows setting options.
 The design is that all configuration is contained within a Options object, which gets populated from a configuration files and the command-line.
 The configuration file can be expanded, but there are some applicative options that must be there for proper operation of the scripts (as they are, before you branch and make them your own :smile:).
+Command-line options do not require a "-" prefix, but the parser tolerates them. 
 
 Most of the command-line arguments are related to the performing operations. However, there are those that affect the general behavior:
 
-1. namedConfigFile - this option allows you to specific a configuration file. Usage: `namedConfigFile="<path_to_file>"`
+1. configFile - this option allows you to specific a configuration file. Usage: `configFile="<path_to_file>"`
 
 1. Verbose - this option outputs extended information regarding the execution. Usage: `Verbose`
 
 Example:
 ```
-> py asocCreateReport.py namedConfigFile="./reportConfig.json"
+> py asocCreateReport.py configFile="./reportConfig.json"
 Using configuration file: ./reportConfig.json
 
-> py asocCreateReport.py namedConfigFile="./reportConfig.json" Verbose
+> py asocCreateReport.py configFile="./reportConfig.json" Verbose
 Using configuration file: ./reportConfig.json
 Print level set to Verbose
 ```
 
+> Note: For consistency, where relevant, examples are provided in the context of ASoC, but the apply to ASE as well
+
 ## Terminology: Options vs Flags
-Options are named values. They can have different values, and are accessed by their name. `namedConfigFile` above is a type of option whose value can be the path to any file.
+Options are named values. They can have different values, and are accessed by their name. `configFile` above is a type of option whose value can be the path to any file.
 
 Flags are switches that are either there or not. `Verbose` is a type of flag. It's simple appearance in the command-line indicates a state. 
 
