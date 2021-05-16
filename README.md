@@ -1,9 +1,10 @@
-# asoc-apis
-Learn ASoC APIs by example. Feel free to use or reuse, but keep in mind the code is provided according to the license. 
+# as-apis
+Learn AppScan APIs by example. Feel free to use or reuse, but keep in mind the code is provided according to the license. 
 
 The intention is for you to take the scripts and use them as examples for your own scripts. While in Python, the logic is easily migrated into most languages.
 
-Visit https://cloud.appscan.com/swagger/ui/index for details on how to use the APIs.
+For AppScan on Cloud, visit https://cloud.appscan.com/swagger/ui/index for details on the APIs.
+For AppScan Enterprise, visit your local installation at https://{local}/ase/api/pages/apidocs.html for details on the APIs. (Note that "ase" may be replaced be a local instance name in your organization).
 
 ## Dependencies:
 - Requests: https://requests.readthedocs.io/en/master/
@@ -47,6 +48,15 @@ All JSON file configuration items can be overridden in the command line. To over
 ```
 
 Details about using the command-line can be found [here](./CLI.md).
+
+> **NOTE**
+
+> Before you proceed you should be familiar with the `Verbose` command-line option. 
+> By default, the scripts only print out neccessary information. To get more information for the execution add `Verbose` to the command-line.
+>```
+> py asocCreateReport.py Verbose
+>```
+>Read more in the [CLI documentaion](CLI.md)
 
 The config file has two types of nodes:
 1. Service 

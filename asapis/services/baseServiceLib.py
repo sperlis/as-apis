@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 from requests.api import request
 
 from asapis.utils.configuration import Configuration
-from asapis.utils.printUtil import out
+from asapis.utils.printUtil import logger, PrintLevel
 
 class BaseServiceLib(ABC):
 
@@ -69,7 +69,7 @@ class BaseServiceLib(ABC):
                 The resulting response object of the call
         """
         get = lambda uri,**kwargs: self.session.get(uri, **kwargs)
-        res = self.__internal_call(get, uri, **kwargs)
+        res = self.__internal_call("GET", get, uri, **kwargs)
         return res
 
     # Performs a POST operation, authorizing if needed
@@ -85,7 +85,7 @@ class BaseServiceLib(ABC):
                 The resulting response object of the call
         """
         post = lambda uri,**kwargs: self.session.post(uri, **kwargs)
-        res = self.__internal_call(post, uri, **kwargs)
+        res = self.__internal_call("POST", post, uri, **kwargs)
         return res
 
     # Performs a PUT operation, authorizing if needed
@@ -101,7 +101,7 @@ class BaseServiceLib(ABC):
                 The resulting response object of the call
         """
         put = lambda uri,**kwargs: self.session.put(uri, **kwargs)
-        res = self.__internal_call(put, uri, **kwargs)
+        res = self.__internal_call("PUT", put, uri, **kwargs)
         return res
 
     # performs a DELETE operation, authorizing if needed
@@ -117,11 +117,11 @@ class BaseServiceLib(ABC):
                 The resulting response object of the call
         """
         delete = lambda uri, **kwargs: self.session.delete(uri, **kwargs)
-        res = self.__internal_call(delete, uri, **kwargs)
+        res = self.__internal_call("DELETE", delete, uri, **kwargs)
         return res
 
     def download(self, uri: str, file_path: str, encoding:str = "binary", **kwargs):
-
+        logger(f"Downloading file {uri} to {file_path} using {encoding} encoding",level=PrintLevel.Verbose)
         res = self.get(uri, stream=True)
 
         if not res.ok:
@@ -136,11 +136,28 @@ class BaseServiceLib(ABC):
                 fd.write(res.text)
 
     # Executes the actual HTTP request using the provided operation function
-    def __internal_call(self, httpMethodCall: Callable[[str,dict], requests.Response], uri: str, **kwargs) -> requests.Response:
+    # the method is only needed for logging purposes, the actual call is done via the httpMathodCall lambda
+    def __internal_call(self, method: str, httpMethodCall: Callable[[str,dict], requests.Response], uri: str, **kwargs) -> requests.Response:
+        """Sends an authenticated request to the server. This method makes sure the absolute URI is used
+            as well as re-authorizes in case of a 401 response.
+
+            Args:
+
+            method: the name of the HTTP method to call for logging purposes only
+            httpMethodCall: a lambda function that performs the actual HTTP call
+            uri: relative path after the API prefix (base API URL)
+            <requests args>: all requests.delete arguments are accepted
+
+            Returns:
+                The resulting response object of the call
+        """
         uri = self.get_absolute_uri(uri)
+
+        logger(f"Initiating {method} request to {uri}",level=PrintLevel.Verbose)
 
         res = httpMethodCall(uri, **kwargs)
         if res.status_code == 401:
+            logger("Response is 401 Unauthorized, authorizing and retrying", level=PrintLevel.Verbose)
             self.authorize()
             res = httpMethodCall(uri, **kwargs)
 
@@ -158,9 +175,9 @@ class BaseServiceLib(ABC):
         message = self.get_error_message(response)
         code = self.get_respond_code_text(response)
         if message:
-            out(f"ASoC Error: {code.value} {code} - {message}")
+            logger(f"ASoC Error: {code.value} {code} - {message}")
         else:
-            out(f"ASoC Error: {code.value} {code.name}")
+            logger(f"ASoC Error: {code.value} {code.name}")
 
     # Prints the formatted response error to output and exit
     def print_response_error_and_exit(self, response: requests.Response) -> None:

@@ -4,7 +4,7 @@ from datetime import datetime
 
 from asapis.services.aselib import ASE
 from asapis.ase.aseEnums import FolderItemState
-from asapis.utils.printUtil import out
+from asapis.utils.printUtil import logger
 
 def handle_status(message) -> FolderItemState:
     """Prints the progress message according to the scope and gets the ExecutionProgress
@@ -18,7 +18,7 @@ def handle_status(message) -> FolderItemState:
     """
     exec_prog = FolderItemState[message["content-scan-job"]["state"]["name"]]
 
-    out(f"{datetime.now()} - Progress is set to: {exec_prog.name}")
+    logger(f"{datetime.now()} - Progress is set to: {exec_prog.name}")
 
     return exec_prog
 
@@ -45,7 +45,7 @@ def monitor_scan_progress(ase:ASE, folder_item_id:str = None, continuos:bool = N
         res = ase.get(f"folderitems/{folder_item_id}")
         if not res.ok:
             if res.status_code == 403:
-                out(f"Unauthorized. Check that scan exists and you have access to it")
+                logger(f"Unauthorized. Check that scan exists and you have access to it")
             else:
                 ase.print_response_error(res)
             exit(1)

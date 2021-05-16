@@ -3,7 +3,7 @@ from datetime import datetime
 
 from asapis.services.asoclib import ASoC
 from asapis.asoc.asocEnums import APIScopeV2, ExecutionProgressV3
-from asapis.utils.printUtil import out
+from asapis.utils.printUtil import logger
 
 def handle_status(message, scope:APIScopeV2) -> ExecutionProgressV3:
     """Prints the progress message according to the scope and gets the ExecutionProgress
@@ -25,9 +25,9 @@ def handle_status(message, scope:APIScopeV2) -> ExecutionProgressV3:
         exec_prog = ExecutionProgressV3[message["ExecutionProgress"]]
         pause_reason = message["PauseReason"]
 
-    out(f"{datetime.now()} - {scope.name} Progress is set to: {exec_prog.name}")
+    logger(f"{datetime.now()} - {scope.name} Progress is set to: {exec_prog.name}")
     if exec_prog is ExecutionProgressV3.Paused:
-        out(f"{scope.name} paused due to: {pause_reason}")
+        logger(f"{scope.name} paused due to: {pause_reason}")
 
     return exec_prog
 
@@ -65,7 +65,7 @@ def monitor_scan_progress(asoc:ASoC, subject_id:str = None, scope:APIScopeV2 = N
         res = asoc.get(request_line)
         if not res.ok:
             if res.status_code == 403:
-                out(f"Unauthorized. Check that scan or execution exists and you have access to it (ASoC returns a 403 either way)")
+                logger(f"Unauthorized. Check that scan or execution exists and you have access to it (ASoC returns a 403 either way)")
             else:
                 asoc.print_response_error(res)
             exit(1)

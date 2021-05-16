@@ -5,7 +5,7 @@ import json
 import re
 
 from asapis.services.baseServiceLib import BaseServiceLib
-from asapis.utils.printUtil import out
+from asapis.utils.printUtil import logger, print_result
 
 class ASoC(BaseServiceLib):
     """
@@ -34,7 +34,7 @@ class ASoC(BaseServiceLib):
         try:
             requests.get(self.host)
         except:
-            out(f"Failed connecting to {self.host}. Make sure host is valid and accessible.")
+            logger(f"Failed connecting to {self.host}. Make sure host is valid and accessible.")
             exit(1)
 
     # get a session token using the Key ID and Secret
@@ -45,8 +45,6 @@ class ASoC(BaseServiceLib):
            Once successful, the auth_info object is updated with the correct session token.
         """
         if key_id is None:
-            if not self.config:
-                self.getCommandLineconfig()
             if "ASoC" in self.config:
                 key_id = self.config["ASoC"]["KeyId"]
                 key_secret = self.config["ASoC"]["KeySecret"]
@@ -70,7 +68,7 @@ class ASoC(BaseServiceLib):
 
         self.get_user_data()
 
-        out(f"{self.host} authorized {self.auth_info['userName']} ({self.auth_info['email']}) at {self.auth_info['org']}")
+        logger(f"{self.host} authorized {self.auth_info['userName']} ({self.auth_info['email']}) at {self.auth_info['org']}")
 
     def get_user_data(self):
 
@@ -163,5 +161,5 @@ class ASoC(BaseServiceLib):
 # Authorizes and outputs a session token. Part utility, part test.
 if __name__ == "__main__":
     asoc = ASoC()
-    out(f"Authorization token: {asoc.auth_info['Token']}")
+    print_result(f"Authorization token: {asoc.auth_info['Token']}")
 

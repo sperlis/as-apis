@@ -5,7 +5,7 @@ import os.path
 import ast
 import re
 
-from asapis.utils.printUtil import PrintLevel, out
+from asapis.utils.printUtil import PrintLevel, logger
 from asapis.utils.defaultConfig import default_config
 
 class Configuration:
@@ -29,18 +29,8 @@ class Configuration:
               Value can be anything that evaluated by literal_eval (https://docs.python.org/3/library/ast.html#ast.literal_eval)
            2) flags - a single value, placed at the root of the options with a None value only to indicate it was set
         """
-        config_prefix = re.compile("^-?configFile=", re.I)
-        
-        res = list(filter(lambda option: bool(config_prefix.match(option)), config_values))
-
-        # read config file
-        if len(res) > 0:
-            file = config_prefix.sub("", res[0])
-            # the first config file found is used
-            self.__load_config(file)
-        else: 
-            self.__load_default_config()
-            
+        config_values = self.__handle_specials(config_values)
+           
         # Process the command-line. To override config file the format must be <name>=<value>
         # value-less options can also be provided (for custom execution flags) and they are
         # added with the value of 'None'. They are added at the root of the Options object:
@@ -49,8 +39,6 @@ class Configuration:
         # (as it does not exist)
         for val in config_values:
             val = val.lstrip('-/')
-            if bool(config_prefix.match(val)):
-                continue
             eq = val.find('=')
             # unvalued flags
             if eq == -1:
@@ -61,30 +49,51 @@ class Configuration:
                 value = val[eq + 1:]
                 self.__set_value(name, value)
 
-        # Special handling for the print level which is set globally, even if access to options is not available
-        # The use of os.environ allows always running in Verbose by setting the OS environment
-        if "Verbose" in self.config:
-            os.environ["AppScan_API_Verbose"] = ""
-            out("Print level set to Verbose", level=PrintLevel.Verbose)
+    # Handle special options that affect following execution
 
+    def __handle_specials(self, config_values:dict):
+        specials_pattern = re.compile("(-?Verbose)|(-?Silent)|(^-?configFile=)", re.I)
+
+        specials = list(filter(lambda option: bool(specials_pattern.match(option)), config_values))
+
+        explicit_verbose = False
+        explicit_config = None
+        os.environ["AppScan_API_Log_Level"] = "Normal"
+        for special in specials:
+            if special.lower() == "verbose":
+                os.environ["AppScan_API_Log_Level"] = "Verbose"
+                logger("Print level set to Verbose", level=PrintLevel.Verbose)
+                explicit_verbose = True
+            elif special.lower() == "silent" and not explicit_verbose: # Verbose trumps Silent
+                os.environ["AppScan_API_Log_Level"] = "Silent"
+            elif not explicit_config and special.lower().count("configfile") != 0:
+                # get config file from option
+                # the first file is used
+                explicit_config = specials_pattern.sub("", special)
+
+        if explicit_config:
+            self.__load_config(explicit_config)
+        else: self.__load_default_config()
+        
+        return list(set(config_values) - set(specials))
 
     def __load_config(self, config_file_path:str):
         if not os.path.exists(config_file_path) or not os.path.isfile(config_file_path):
             self.config = default_config
-            out(f"\"{config_file_path}\" Custom file does not exist or path is not a file. Using default configuration")
+            logger(f"\"{config_file_path}\" Custom file does not exist or path is not a file. Using default configuration")
         else:
             with open(config_file_path, "r") as config_file:
                 self.config = json.load(config_file)
-            out(f"Using configuration file: {config_file_path}")
+            logger(f"Using configuration file: {config_file_path}")
     
     def __load_default_config(self):
         if os.path.exists(self.default_file):
             with open(self.default_file, "r") as config_file:
                 self.config = json.load(config_file)
-            out(f"Using configuration file: {self.default_file}")
+            logger(f"Using configuration file: {self.default_file}")
         else:
             self.config = default_config
-            out(f"Using default configuration", level=PrintLevel.Verbose)
+            logger(f"Using default configuration", level=PrintLevel.Verbose)
 
 
     def __set_value(self, param, value):
@@ -112,18 +121,18 @@ class Configuration:
             member_type = type(node[member])
             if value_type is member_type:
                 node[member] = new_value
-                out(f"Option overriding: {param} with {new_value}", level=PrintLevel.Verbose)
+                logger(f"Option overriding: {param} with {new_value}", level=PrintLevel.Verbose)
             elif failed_eval:
-                out(f"Option overriding: Failed evaluating \"{value}\" for {param} of type '{member_type.__name__}'")
+                logger(f"Option overriding: Failed evaluating \"{value}\" for {param} of type '{member_type.__name__}'")
             else:
-                out(f"Option overriding: Type mismatch for {param}. Expecting '{member_type.__name__}' and got '{value_type.__name__}'")
+                logger(f"Option overriding: Type mismatch for {param}. Expecting '{member_type.__name__}' and got '{value_type.__name__}'")
         else: 
             # new member, assigned the value and type as it was evaluated
             node[member] = new_value
-            out(f"Option introducing: new {param} with {new_value} added", level=PrintLevel.Verbose)
+            logger(f"Option introducing: new {param} added with {new_value}", level=PrintLevel.Verbose)
 
     def print_config(self):
-        out(json.dumps(self.config, indent=2))
+        logger(json.dumps(self.config, indent=2))
 
 if __name__ == "__main__":
     Configuration = Configuration(sys.argv[1:])

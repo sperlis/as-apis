@@ -1,7 +1,7 @@
 from asapis.services.asoclib import ASoC
 from asapis.asoc.asocScanMonitor import monitor_scan_progress
 from asapis.asoc.asocEnums import APIScopeV2
-from asapis.utils.printUtil import out
+from asapis.utils.printUtil import print_result
 
 asoc = ASoC()
 
@@ -16,7 +16,7 @@ if login_file:
     if login_file_id:
         model["LoginSequenceFileId"] = login_file_id
     else:
-        out("Login file upload has failed. Stopping execution.")
+        print_result("Login file upload has failed. Stopping execution.")
         exit(1)
 
 # if a scan-file (a .scan or .scant files) are set, upload them to ASoC
@@ -37,7 +37,7 @@ if not res.ok:
 
 scan_id = res.json()["Id"]
 
-out(f"Created scan ID: {scan_id}")
+print_result(f"Created scan ID: {scan_id}")
 
 if asoc.config["ScanMonitor"]["Automatic"]:
     monitor_scan_progress(asoc, subject_id=scan_id, scope=APIScopeV2.Scan)

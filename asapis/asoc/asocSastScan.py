@@ -1,7 +1,7 @@
 from asapis.services.asoclib import ASoC
 from asapis.asoc.asocScanMonitor import monitor_scan_progress
 from asapis.asoc.asocEnums import APIScopeV2
-from asapis.utils.printUtil import out
+from asapis.utils.printUtil import print_result, logger
 
 asoc = ASoC()
 
@@ -18,7 +18,7 @@ if scan_file:
 
 # The ID can be placed directly in the model (externally) but it must exist
 if not model["ApplicationFileId"]: 
-    out("A required application file (IRX) is missing. Exiting.")
+    logger("A required application file (IRX) is missing. Exiting.")
     exit(1)
     
 res = asoc.post("Scans/StaticAnalyzer", json = model)
@@ -29,7 +29,7 @@ if not res.ok:
 
 scan_id = res.json()["Id"]
 
-out(f"Created scan ID: {scan_id}")
+print_result(f"Created scan ID: {scan_id}")
 
 if asoc.config["ScanMonitor"]["Automatic"]:
     monitor_scan_progress(asoc, subject_id=scan_id, scope=APIScopeV2.Scan)

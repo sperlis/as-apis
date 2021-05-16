@@ -2,7 +2,7 @@ from contextlib import suppress
 
 from asapis.services.aselib import ASE
 from asapis.services.aseInventory import NotFoundInventoryError
-from asapis.utils.printUtil import out
+from asapis.utils.printUtil import logger
 from asapis.ase.aseDastScanActions import run_dast_scan
 from asapis.ase.aseDastScanConfig import config_dast_scan
 
@@ -43,7 +43,7 @@ job_info = res.json()
 
 job_id = job_info["id"]
 
-out(f"Created scan job Folder Item ID: {job_id}")
+logger(f"Created scan job Folder Item ID: {job_id}")
 
 if (job_details["AutoConfig"]):
   # Change new job configuration

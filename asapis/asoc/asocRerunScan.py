@@ -2,7 +2,7 @@ import requests
 
 from asapis.services.asoclib import ASoC
 from asapis.asoc.asocEnums import APIScopeV2, TechnologyV2
-from asapis.utils.printUtil import out
+from asapis.utils.printUtil import print_result
 from asapis.asoc.asocScanMonitor import monitor_scan_progress
 
 asoc = ASoC()
@@ -33,7 +33,7 @@ model = None
 if technology is TechnologyV2.DynamicAnalyzer:
     model = asoc.get_model("AsocDastScan")
 else:
-    model = asoc.config("AsocSastScan")
+    model = asoc.config["AsocSastScan"]
 
 changed = False
 
@@ -78,7 +78,7 @@ if not res.ok:
     asoc.print_response_error(res)
     exit(1)
 
-out(f"Reran scan ID: {scan_id}")
+print_result(f"Reran scan ID: {scan_id}")
 
 if asoc.config["ScanMonitor"]["Automatic"]:
     monitor_scan_progress(asoc, subject_id=scan_id, scope=APIScopeV2.Scan)

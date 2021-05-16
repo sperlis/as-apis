@@ -136,6 +136,15 @@ This will work OK. However, this will also work OK:
 
 but of course, break the logic of the application. Avoid this unless any other object is completely unreasonable.
 
+## Logging
+By default, the command-line prints to standard-out limited information. There are basic connection details for validatation, authorization confirmation, configuration source, errors, etc. 
+
+### Verbose
+To get more details on the execution, append the `Verbose` command-line option. This will output overriding configuration, request details, etc. This can be useful in debugging the REST APIs.
+
+### Silent
+The `Silent` command-line option hides everything except the resulting operations. It will output response details, progress, status, etc. Use this in automation scenarios to have less to parse out.
+
 ## Custom Options
 Any command-line option set in the form form of name=value will be treated as a configuration item and added to the options object in __relative hierarchy__.
 
