@@ -6,7 +6,7 @@ import urllib3
 from requests.exceptions import SSLError
 
 from asapis.services.baseServiceLib import BaseServiceLib
-from asapis.utils.printUtil import logger, PrintLevel, print_result
+from asapis.utils.printUtil import logger, PrintLevel, print_result, print_json
 from asapis.services.aseInventory import ASEInventory
 
 class ASE(BaseServiceLib):
@@ -38,12 +38,12 @@ class ASE(BaseServiceLib):
             exit(1)
         self.host = self.config["ASE"]["Host"].rstrip("/")
         verify = self.config["ASE"]["Verify"] if "Verify" in self.config["ASE"] else True
-        
-        # If use explicitly set Verify=False to allow insecure requests, we surpress the warning
+
+        # If use explicitly set Verify=False to allow insecure requests, we suppress the warning
         if not verify:
-            logger("Connection Verficiation Disabled. Disabling urllib3.exceptions.InsecureRequestWarning warning.", level=PrintLevel.Verbose)
+            logger("Connection Verification Disabled. Disabling urllib3.exceptions.InsecureRequestWarning warning.", level=PrintLevel.Verbose)
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-        else: logger("Connection Verficiation Enabled", level=PrintLevel.Verbose)
+        else: logger("Connection Verification Enabled", level=PrintLevel.Verbose)
 
         self.session.verify = verify
 
@@ -141,9 +141,6 @@ class ASE(BaseServiceLib):
 # Authorizes and outputs a session token. Part utility, part test.
 if __name__ == "__main__":
     ase = ASE()
-    print_result(f"Session ID: {ase.auth_info['sessionId']}")
-    cookies = ase.session.cookies.get_dict()
-    print_result("Cookies:")
-    for key in cookies:
-        print_result(f"{key} = {cookies[key]}")
+    print_json("Auth Info: ", ase.auth_info)
+    print_json("Cookies:", ase.session.cookies.get_dict())
 

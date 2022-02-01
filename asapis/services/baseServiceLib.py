@@ -160,6 +160,8 @@ class BaseServiceLib(ABC):
             logger("Response is 401 Unauthorized, authorizing and retrying", level=PrintLevel.Verbose)
             self.authorize()
             res = httpMethodCall(uri, **kwargs)
+        if not res.ok:
+            self.print_response_error(res)
 
         return res
 

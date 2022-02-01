@@ -25,7 +25,8 @@ class ASoC(BaseServiceLib):
     def __init__(self):
         super().__init__()
         self.host = self.config["ASoC"]["Host"].rstrip("/") if self.config["ASoC"]["Host"] else self.host
-        self.api_version = self.config["ASoC"]["APIVersion"] if self.config["ASoC"]["APIVersion"] else self.api_version
+        if "APIVersion" in self.config["ASoC"]:
+            self.api_version = self.config["ASoC"]["APIVersion"]
         self.__verifyHost()
         self.authorize()
 

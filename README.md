@@ -52,11 +52,11 @@ Details about using the command-line can be found [here](./CLI.md).
 > **NOTE**
 
 > Before you proceed you should be familiar with the `Verbose` command-line option. 
-> By default, the scripts only print out neccessary information. To get more information for the execution add `Verbose` to the command-line.
+> By default, the scripts only print out necessary information. To get more information for the execution add `Verbose` to the command-line.
 >```
 > py asocCreateReport.py Verbose
 >```
->Read more in the [CLI documentaion](CLI.md)
+>Read more in the [CLI documentation](CLI.md)
 
 The config file has two types of nodes:
 1. Service 

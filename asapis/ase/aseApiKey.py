@@ -11,3 +11,4 @@ else:
     res = ase.get("account/getapikey")
     api_key = res.json()
     print_result(api_key)
+
